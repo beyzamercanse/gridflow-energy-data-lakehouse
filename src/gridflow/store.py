@@ -47,7 +47,11 @@ def save_bronze(
             "sha256": digest,
             "request_url": request_url,
             "fetched_at_utc": datetime.now(UTC).isoformat(),
-            "license": "CC BY 4.0 (attribution required)",
+            "source_terms": (
+                "Energy-Charts: CC BY 4.0; credit Energy-Charts.info"
+                if source == "energy_price"
+                else "Open-Meteo: review attribution and commercial API terms"
+            ),
         }
         temp_metadata = metadata_path.with_suffix(".json.tmp")
         temp_metadata.write_text(json.dumps(metadata, indent=2) + "\n", encoding="utf-8")

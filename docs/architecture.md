@@ -1,4 +1,4 @@
-# GridFlow — Technical Architecture (Planned)
+# GridFlow — Technical Architecture
 
 ## Data flow
 
@@ -20,7 +20,7 @@ flowchart TD
 
 - **Python 3.12+** with httpx for API ingestion and PyArrow for columnar processing
 - **Dagster** for asset dependencies, schedules and partition backfills
-- **Docker Compose + MinIO** for local, S3-compatible object storage
+- **Docker Compose + SILO** for local, MinIO/S3-compatible object storage
 - **Parquet** partitioned by market/source/date
 - **DuckDB + dbt-duckdb** for local analytics transformations
 - **GitHub Actions + pytest + Ruff** for CI
@@ -37,6 +37,8 @@ flowchart TD
 | Gold | `mart_market_daily` | Market-local date summary with explicit price methodology |
 
 ## Important correctness decisions
+
+**Phase 2 implementation:** Bronze and Parquet objects have versioned SHA-256 source paths. Silver stores UTC-aware timestamps, original units and interval lengths. SILO replaces the withdrawn MinIO image. Gold marts and orchestration remain planned.
 
 **Market time zones:** store UTC timestamps and the original market time zone separately. Europe has daylight-saving transitions, and intervals must be processed based on actual duration rather than assumed 24-hour days.
 

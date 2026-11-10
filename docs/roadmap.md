@@ -19,13 +19,13 @@ Phase 1 is implemented, with offline fixture-based CI. Each milestone will be de
 
 **Acceptance:** offline tests and CI pass. Live external API availability remains dependent on the providers.
 
-## Milestone 2 — Local data lake
+## Milestone 2 — Local data lake (implemented, CI validation in progress)
 
-- [ ] Docker Compose and MinIO
-- [ ] Bronze JSON upload with checksum and request metadata
-- [ ] Silver normalization to Parquet using PyArrow
-- [ ] UTC and DST tests, interval and currency/unit validation
-- [ ] Idempotency and revision-handling integration tests
+- [x] Docker Compose with maintained SILO (MinIO/S3 compatible)
+- [x] Bronze JSON upload with checksum and request metadata
+- [x] Silver Parquet normalization via PyArrow
+- [x] UTC/DST and interval/unit validation
+- [x] Idempotency and source revision integration tests
 
 **Acceptance:** repeating a partition produces deterministic Silver results without duplicated intervals.
 

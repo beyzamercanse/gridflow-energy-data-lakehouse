@@ -45,7 +45,7 @@ def request_json(
         response.raise_for_status()
         payload = response.json()
         if not isinstance(payload, dict):
-            raise TypeError(f"{endpoint}: expected a JSON object")
+            raise ValueError(f"{endpoint}: expected a JSON object")
         return payload, str(response.request.url)
 
     raise RuntimeError("Unreachable: request loop exhausted")
@@ -64,7 +64,7 @@ def energy_price(
     )
     data = payload.get("data")
     if not isinstance(data, list):
-        raise TypeError("Energy-Charts v2 price response missing data list")
+        raise ValueError("Energy-Charts v2 price response missing data list")
     return payload, url
 
 
@@ -91,7 +91,7 @@ def historical_weather(
     )
     hourly = payload.get("hourly")
     if not isinstance(hourly, dict):
-        raise TypeError("Weather response missing hourly dictionary")
+        raise ValueError("Weather response missing hourly dictionary")
     times = hourly.get("time")
     temps = hourly.get("temperature_2m")
     winds = hourly.get("wind_speed_10m")

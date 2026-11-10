@@ -83,13 +83,15 @@ def test_bad_weather_arrays_rejected():
                 },
             },
         )
-    ) as client, pytest.raises(ValueError, match="mismatched"):
-        historical_weather(client, date(2024, 1, 1))
+    ) as client:
+        with pytest.raises(ValueError, match="mismatched"):
+            historical_weather(client, date(2024, 1, 1))
 
 
 def test_bad_price_envelope_rejected():
-    with client_for(lambda request: httpx.Response(200, json={"not_data": []})) as client, pytest.raises(TypeError, match="data list"):
-        energy_price(client, date(2024, 1, 1))
+    with client_for(lambda request: httpx.Response(200, json={"not_data": []})) as client:
+        with pytest.raises(ValueError, match="data list"):
+            energy_price(client, date(2024, 1, 1))
 
 
 def test_unauthorized_not_retried():
@@ -99,6 +101,7 @@ def test_unauthorized_not_retried():
         attempts.append(request)
         return httpx.Response(401)
 
-    with client_for(responder) as client, pytest.raises(httpx.HTTPStatusError):
-        request_json(client, "https://example.test/secure", {}, max_retries=3)
+    with client_for(responder) as client:
+        with pytest.raises(httpx.HTTPStatusError):
+            request_json(client, "https://example.test/secure", {}, max_retries=3)
     assert len(attempts) == 1

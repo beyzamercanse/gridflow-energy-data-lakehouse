@@ -2,7 +2,7 @@
 
 **Data Engineering portfolio project | Python · SQL · Dagster · Docker · Parquet · S3/MinIO · DuckDB · dbt**
 
-GridFlow is a planned, production-style data platform for ingesting, validating, processing and analyzing European electricity-market and historical weather data. **Phase 1 is implemented:** typed Python API ingestion for Energy-Charts v2 and Open-Meteo historical weather, immutable content-addressed Bronze JSON, source provenance, retry handling, offline tests, and CI. MinIO, Parquet, Dagster, DuckDB, dbt and hosting remain planned.
+GridFlow is a planned, production-style data platform for ingesting, validating, processing and analyzing European electricity-market and historical weather data. **Phases 1–2 implemented:** API ingestion, immutable Bronze JSON, S3-compatible object storage, UTC-normalized Silver Parquet, checksum provenance, and automated tests. Dagster orchestration, DuckDB/dbt Gold marts, and public deployment remain planned.
 
 ## Business problem
 
@@ -59,6 +59,24 @@ See [architecture](docs/architecture.md) and [implementation roadmap](docs/roadm
 4. **Recoverability.** Use bounded retries, rate-limit backoff, checkpointed partitions and independently rerunnable failed slices.
 5. **Testability.** Mock HTTP responses in unit tests and run storage/pipeline smoke tests in CI.
 
+## Phase 2 — Local S3-compatible lakehouse
+
+The original MinIO Docker image was withdrawn. GridFlow uses a pinned, maintained [SILO](https://github.com/pgsty/silo) container that preserves the MinIO/S3 API and settings. The local example credentials must never be reused in production.
+
+```bash
+python -m pip install -e '.[dev,lake]'
+cp .env.example .env
+docker compose up -d --wait
+set -a
+. ./.env
+set +a
+gridflow energy-price --date 2024-01-01 --bzn DE-LU --s3 --silver
+gridflow weather --date 2024-01-01 --location-id berlin --s3 --silver
+docker compose down
+```
+
+The S3 console is available at http://127.0.0.1:9001 (localhost only). Omit `--s3` to write local Silver Parquet without an S3 service. See [Phase 2 guide](docs/phase2.md).
+
 ## Run Phase 1 locally
 
 ```bash
@@ -76,11 +94,12 @@ Commands fetch public historical API responses and save source JSON and metadata
 - [x] New public GitHub repository
 - [x] Project charter, architecture and development roadmap
 - [x] Python package and source API clients
-- [ ] Docker Compose / MinIO local lake
+- [x] Docker Compose / SILO S3-compatible local lake
 - [x] Bronze JSON local ingestion with SHA-256 provenance
-- [ ] Silver Parquet and Gold models
+- [x] PyArrow Silver Parquet with UTC time and unit validation
+- [ ] Gold marts and analytics
 - [ ] Dagster schedules, backfills and monitoring
-- [x] CI + source contract and idempotency tests
+- [x] CI + API contracts, DST, interval checks, revision handling and S3 integration tests
 - [ ] Gold analytics marts and BI demonstrations
 
-**Status: Phase 1 implemented; later phases planned.** This project is separate from [CommerceIQ](https://github.com/beyzamercanse/commerceiq-retail-analytics).
+**Status: Phases 1–2 implemented; Phase 3 orchestration and Phase 4 Gold analytics planned.** This project is separate from [CommerceIQ](https://github.com/beyzamercanse/commerceiq-retail-analytics).
