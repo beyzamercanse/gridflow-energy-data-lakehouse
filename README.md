@@ -2,7 +2,7 @@
 
 **Data Engineering portfolio project | Python · SQL · Dagster · Docker · Parquet · S3/MinIO · DuckDB · dbt**
 
-GridFlow is a planned, production-style data platform for ingesting, validating, processing and analyzing European electricity-market and historical weather data. This repository currently contains the **project charter and technical design**. No ingestion pipelines or deployed infrastructure have been implemented yet.
+GridFlow is a planned, production-style data platform for ingesting, validating, processing and analyzing European electricity-market and historical weather data. **Phase 1 is implemented:** typed Python API ingestion for Energy-Charts v2 and Open-Meteo historical weather, immutable content-addressed Bronze JSON, source provenance, retry handling, offline tests, and CI. MinIO, Parquet, Dagster, DuckDB, dbt and hosting remain planned.
 
 ## Business problem
 
@@ -15,7 +15,7 @@ Electricity prices, generation and weather observations arrive through separate 
 - [Fraunhofer Energy-Charts API](https://api.energy-charts.info/) — historical European electricity prices and generation statistics, subject to endpoint and market coverage.
 - [Open-Meteo Historical Weather API](https://open-meteo.com/en/docs/historical-weather-api) — historical weather variables for selected reference locations.
 
-Initial proof of concept: Netherlands and Germany/Luxembourg markets where source data is available, with selected weather stations. API access, response structure, licensing and source coverage must be verified during implementation.
+Initial proof of concept: Germany/Luxembourg price bidding zone (DE-LU) and Berlin historical weather. Additional market zones and reference locations will follow.
 
 ## Target architecture
 
@@ -59,14 +59,28 @@ See [architecture](docs/architecture.md) and [implementation roadmap](docs/roadm
 4. **Recoverability.** Use bounded retries, rate-limit backoff, checkpointed partitions and independently rerunnable failed slices.
 5. **Testability.** Mock HTTP responses in unit tests and run storage/pipeline smoke tests in CI.
 
+## Run Phase 1 locally
+
+```bash
+python -m pip install -e '.[dev]'
+ruff check .
+pytest -q
+gridflow energy-price --date 2024-01-01 --bzn DE-LU
+gridflow weather --date 2024-01-01 --latitude 52.52 --longitude 13.41
+```
+
+Commands fetch public historical API responses and save source JSON and metadata under the gitignored `data/bronze/` directory. GitHub CI only uses mocked API responses; it does not make live network requests. See [Phase 1 guide](docs/phase1.md).
+
 ## Progress
 
 - [x] New public GitHub repository
 - [x] Project charter, architecture and development roadmap
-- [ ] Python package and source API clients
+- [x] Python package and source API clients
 - [ ] Docker Compose / MinIO local lake
-- [ ] Bronze/Silver/Gold pipelines
+- [x] Bronze JSON local ingestion with SHA-256 provenance
+- [ ] Silver Parquet and Gold models
 - [ ] Dagster schedules, backfills and monitoring
-- [ ] CI/CD, data-quality tests and BI demonstrations
+- [x] CI + source contract and idempotency tests
+- [ ] Gold analytics marts and BI demonstrations
 
-**Status: design stage.** This project is intentionally separate from [CommerceIQ](https://github.com/beyzamercanse/commerceiq-retail-analytics). GridFlow implementation will begin after CommerceIQ's next milestone.
+**Status: Phase 1 implemented; later phases planned.** This project is separate from [CommerceIQ](https://github.com/beyzamercanse/commerceiq-retail-analytics).

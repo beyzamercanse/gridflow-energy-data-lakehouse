@@ -1,6 +1,6 @@
 # Implementation Roadmap
 
-The repository begins with design and documentation only. Each milestone will be developed, tested and merged separately.
+Phase 1 is implemented, with offline fixture-based CI. Each milestone will be developed, tested and merged separately.
 
 ## Milestone 0 — Repository foundation (complete)
 
@@ -8,16 +8,16 @@ The repository begins with design and documentation only. Each milestone will be
 - [x] Project definition and technical architecture
 - [x] Staged implementation roadmap
 
-## Milestone 1 — API ingestion
+## Milestone 1 — API ingestion (code complete)
 
-- [ ] Set up Python package, pinned dependencies, Ruff and pytest
-- [ ] Implement Energy-Charts API client (dates, zone, timeout, rate limiting)
-- [ ] Implement Open-Meteo historical-weather client
-- [ ] Validate API responses and preserve source metadata
-- [ ] Build fixture-driven tests for malformed responses and API errors
-- [ ] Add CI
+- [x] Python package, dependencies, Ruff and pytest
+- [x] Energy-Charts v2 price API client (dates, zone, timeout, 429 and 5xx retries)
+- [x] Open-Meteo historical-weather API client
+- [x] Validate response structures, store raw JSON and source metadata
+- [x] Tests for malformed responses, HTTP errors and idempotent storage
+- [x] GitHub Actions CI
 
-**Acceptance:** CLI can fetch a small historical range, outputs well-formed raw responses, and passes tests with mocked APIs.
+**Acceptance:** offline tests and CI pass. Live external API availability remains dependent on the providers.
 
 ## Milestone 2 — Local data lake
 
