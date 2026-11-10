@@ -19,7 +19,7 @@ Phase 1 is implemented, with offline fixture-based CI. Each milestone will be de
 
 **Acceptance:** offline tests and CI pass. Live external API availability remains dependent on the providers.
 
-## Milestone 2 — Local data lake (implemented, CI validation in progress)
+## Milestone 2 — Local data lake (implemented and CI-validated)
 
 - [x] Docker Compose with maintained SILO (MinIO/S3 compatible)
 - [x] Bronze JSON upload with checksum and request metadata

@@ -1,5 +1,7 @@
 # GridFlow — European Energy Data Lakehouse
 
+[![CI](https://github.com/beyzamercanse/gridflow-energy-data-lakehouse/actions/workflows/ci.yml/badge.svg)](https://github.com/beyzamercanse/gridflow-energy-data-lakehouse/actions/workflows/ci.yml)
+
 **Data Engineering portfolio project | Python · SQL · Dagster · Docker · Parquet · S3/MinIO · DuckDB · dbt**
 
 GridFlow is a planned, production-style data platform for ingesting, validating, processing and analyzing European electricity-market and historical weather data. **Phases 1–2 implemented:** API ingestion, immutable Bronze JSON, S3-compatible object storage, UTC-normalized Silver Parquet, checksum provenance, and automated tests. Dagster orchestration, DuckDB/dbt Gold marts, and public deployment remain planned.
