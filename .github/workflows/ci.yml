@@ -34,4 +34,4 @@ jobs:
         run: pytest -q -m integration
       - name: Stop local object store
         if: always()
-        run: docker compose down --remove-orphans
+        run: if [ -f .env ]; then docker compose down --remove-orphans; fi

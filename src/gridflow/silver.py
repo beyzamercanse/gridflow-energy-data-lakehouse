@@ -13,7 +13,6 @@ from typing import Any
 
 import pyarrow as pa
 
-
 PRICE_SCHEMA = pa.schema(
     [
         ("bidding_zone", pa.string()),
