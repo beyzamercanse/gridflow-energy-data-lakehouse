@@ -133,6 +133,6 @@ def test_weather_offset_required_utc():
 def test_weather_hourly_units_required():
     data = weather(["2024-01-01T00:00"], [1.0], [3.0])
     del data["hourly_units"]
-    with pytest.raises(ValueError, match="unit metadata"):
+    with pytest.raises(TypeError, match="unit metadata"):
         normalize_weather(data, location_id="berlin", source_sha256=SHA)
 

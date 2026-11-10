@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import math
 from datetime import UTC, datetime, timedelta
+from itertools import pairwise
 from typing import Any
 
 import pyarrow as pa
@@ -45,7 +46,7 @@ WEATHER_SCHEMA = pa.schema(
 def _utc_instant(value: str, *, naive_is_utc: bool = False) -> datetime:
     if not isinstance(value, str):
         raise TypeError("Timestamp must be an ISO 8601 string")
-    stamp = datetime.fromisoformat(value.replace("Z", "+00:00"))
+    stamp = datetime.fromisoformat(value)
     if stamp.tzinfo is None:
         if not naive_is_utc:
             raise ValueError("Electricity timestamps require an explicit UTC offset")
@@ -152,7 +153,7 @@ def normalize_prices(
 
     for series, pairs in intervals.items():
         pairs.sort()
-        for (_, previous_end), (next_start, _) in zip(pairs, pairs[1:]):
+        for (_, previous_end), (next_start, _) in pairwise(pairs):
             if next_start < previous_end:
                 raise ValueError(f"Overlapping UTC intervals for series {series}")
     rows.sort(key=lambda row: (row["start_utc"], row["series_id"]))
@@ -170,7 +171,7 @@ def normalize_weather(
         raise TypeError("Weather hourly data must be a mapping")
     units = payload.get("hourly_units")
     if not isinstance(units, dict):
-        raise ValueError("Weather hourly unit metadata is required")
+        raise TypeError("Weather hourly unit metadata is required")
     times = hourly.get("time")
     temperatures = hourly.get("temperature_2m")
     wind_speeds = hourly.get("wind_speed_10m")
@@ -212,7 +213,7 @@ def normalize_weather(
             }
         )
     rows.sort(key=lambda row: row["start_utc"])
-    for before, after in zip(rows, rows[1:]):
+    for before, after in pairwise(rows):
         if after["start_utc"] - before["start_utc"] != timedelta(hours=1):
             raise ValueError("Non-contiguous weather hourly series; investigate missing hours")
     return pa.Table.from_pylist(rows, schema=WEATHER_SCHEMA)
