@@ -5,7 +5,7 @@ from __future__ import annotations
 import hashlib
 import json
 from dataclasses import dataclass
-from datetime import date, datetime, timezone
+from datetime import UTC, date, datetime
 from pathlib import Path
 
 
@@ -46,7 +46,7 @@ def save_bronze(
             "partition_date": day.isoformat(),
             "sha256": digest,
             "request_url": request_url,
-            "fetched_at_utc": datetime.now(timezone.utc).isoformat(),
+            "fetched_at_utc": datetime.now(UTC).isoformat(),
             "license": "CC BY 4.0 (attribution required)",
         }
         temp_metadata = metadata_path.with_suffix(".json.tmp")

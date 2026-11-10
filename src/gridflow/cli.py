@@ -41,7 +41,7 @@ def main() -> None:
                 )
                 source = "weather_hourly"
         result = save_bronze(args.out, source, args.date, payload, url)
-    except (ValueError, OSError, httpx.HTTPError) as exc:
+    except (TypeError, ValueError, OSError, httpx.HTTPError) as exc:
         print(f"GridFlow ingestion failed ({type(exc).__name__}): {exc}", file=sys.stderr)
         raise SystemExit(1) from exc
 
